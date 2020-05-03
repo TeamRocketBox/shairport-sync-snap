@@ -1,0 +1,65 @@
+name: shairport-sync
+base: core18
+version: '3.3.5'
+summary: AirPlay audio player.
+description: |
+  Shairport Sync adds multi-room capability with Audio Synchronisation.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+parts:
+  shairport-sync:
+    # See 'snapcraft plugins'
+    plugin: autotools
+    configflags:
+      - '--with-pa'
+      - '--with-soxr'
+      - '--with-avahi'
+      - '--with-ssl=openssl'
+      - '--with-convolution'
+      - '--sysconfdir=/usr/share/etc'
+      
+    source: https://github.com/mikebrady/shairport-sync/archive/3.3.6.tar.gz
+    build-packages:
+      - g++
+      - make
+      - libpopt-dev
+      - libconfig-dev
+      - libpulse-dev
+      - libavahi-client-dev
+      - libssl-dev
+      - libsoxr-dev
+      - libsndfile1-dev
+
+    stage-packages:
+      - libpopt0
+      - libconfig9
+      - libpulse0
+      - libavahi-client3
+      - libssl1.1
+      - libsoxr0
+      - libsndfile1
+
+  shairport-sync-common:
+    plugin: dump
+    source: overlay
+
+apps:
+  shairport-sync:
+    command:
+      bin/client-wrapper bin/shairport-sync
+    plugs:
+      - network
+      - network-bind
+      - audio-playback
+      - avahi-control
+      - home
+
+layout:
+  /etc/shairport-sync.conf:
+    bind-file: $SNAP_DATA/etc/shairport-sync.conf
+
+hooks:
+  install:
+    plugs: [network]

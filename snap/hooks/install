@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+mkdir -p ${SNAP_DATA}/etc
+cp ${SNAP}/usr/share/etc/* ${SNAP_DATA}/etc/
